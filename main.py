@@ -44,9 +44,9 @@ def redrawscreen():
 
 def saveFile(fileName, li):
     try:
-        file = open(fileName, 'x')
+        file = open("drawings/" + fileName, 'x')
     except:
-        file = open(fileName, 'w')
+        file = open("drawings/" + fileName, 'w')
     for p in li:
         file.write(str(p)+"\n")
     
@@ -55,7 +55,7 @@ def saveFile(fileName, li):
 
 def openFile(fileName, li):
     try:
-        file = open(fileName, 'r')
+        file = open("drawings/" + fileName, 'r')
         lines = file.readlines()
         for l in lines:
             l = l.split('/')
