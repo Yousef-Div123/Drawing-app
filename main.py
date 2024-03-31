@@ -1,5 +1,5 @@
 import pygame
-
+import os
 # window
 WIN = pygame.display.set_mode((600, 700))
 pygame.display.set_caption("Pixels")
@@ -29,6 +29,9 @@ class pixel(object):
         self.color = color
     def draw(self, win):
         pygame.draw.circle(win, self.color, (self.x, self.y), self.width)    
+    
+    def __str__(self):
+        return f"{self.x}/{self.y}/{self.width}/{self.color}"
 
 
 #screen 
@@ -38,6 +41,31 @@ def redrawscreen():
         s.draw(WIN)
     WIN.blit(BG, (0, 600))
     pygame.draw.circle(WIN, GRAY, (mx, my), PIXEL_WIDTH, 1)
+
+def saveFile(fileName, li):
+    try:
+        file = open(fileName, 'x')
+    except:
+        file = open(fileName, 'w')
+    for p in li:
+        file.write(str(p)+"\n")
+    file.close()
+
+def openFile(fileName, li):
+    try:
+        file = open(fileName, 'r')
+        lines = file.readlines()
+        for l in lines:
+            l = l.split('/')
+            x = float(l[0])
+            y = float(l[1])
+            width = float(l[2])
+            color = l[3].strip("()\n").split(",")
+            color = (int(color[0].strip()), int(color[1].strip()), int(color[2].strip()))
+            p = pixel(x, y, width, color)
+            li.append(p)
+    except:
+        print("file not found")
 
 #main loop
 run = True
@@ -83,5 +111,13 @@ while run:
                 pixels.pop()
             except:
                 pass
+        if keys[pygame.K_s]:
+            name = input('write the file name: ')
+            saveFile(name, pixels)
+    
+        if keys[pygame.K_f]:
+            name = input('write the name of the file you want to open: ')
+            pixels = []
+            openFile(name, pixels)
     redrawscreen()
     pygame.display.update()
