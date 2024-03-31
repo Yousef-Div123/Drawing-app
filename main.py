@@ -1,5 +1,5 @@
 import pygame
-import os
+
 # window
 WIN = pygame.display.set_mode((600, 700))
 pygame.display.set_caption("Pixels")
@@ -15,23 +15,23 @@ GREEN = (0, 255, 0)
 YELLOW = (255, 255, 0)
 BROWN = (117, 76, 41)
 BG = pygame.image.load("BG.png")
-PIXEL_WIDTH = 20
 
 pixels= []
 color = BLACK
+currentRadius = 20
 
 #class
-class pixel(object):
-    def __init__(self, x, y, width, color):
+class Pixel(object):
+    def __init__(self, x, y, radius, color):
         self.x = x
         self.y = y
-        self.width = width
+        self.radius = radius
         self.color = color
     def draw(self, win):
-        pygame.draw.circle(win, self.color, (self.x, self.y), self.width)    
+        pygame.draw.circle(win, self.color, (self.x, self.y), self.radius)    
     
     def __str__(self):
-        return f"{self.x}/{self.y}/{self.width}/{self.color}"
+        return f"{self.x}/{self.y}/{self.radius}/{self.color}"
 
 
 #screen 
@@ -40,7 +40,7 @@ def redrawscreen():
     for s in pixels:
         s.draw(WIN)
     WIN.blit(BG, (0, 600))
-    pygame.draw.circle(WIN, GRAY, (mx, my), PIXEL_WIDTH, 1)
+    pygame.draw.circle(WIN, GRAY, (mx, my), currentRadius, 1)
 
 def saveFile(fileName, li):
     try:
@@ -49,6 +49,8 @@ def saveFile(fileName, li):
         file = open(fileName, 'w')
     for p in li:
         file.write(str(p)+"\n")
+    
+    print("file saved successfully")
     file.close()
 
 def openFile(fileName, li):
@@ -59,11 +61,13 @@ def openFile(fileName, li):
             l = l.split('/')
             x = float(l[0])
             y = float(l[1])
-            width = float(l[2])
+            radius = float(l[2])
             color = l[3].strip("()\n").split(",")
             color = (int(color[0].strip()), int(color[1].strip()), int(color[2].strip()))
-            p = pixel(x, y, width, color)
+
+            p = Pixel(x, y, radius, color)
             li.append(p)
+        print("file opened successfully")
     except:
         print("file not found")
 
@@ -76,16 +80,17 @@ while run:
             run = False
         if event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 4:
-                PIXEL_WIDTH += 1
-            if PIXEL_WIDTH>1:
+                currentRadius += 1
+            if currentRadius>1:
                 if event.button == 5:
-                    PIXEL_WIDTH -= 1        
+                    currentRadius -= 1        
             
     click = pygame.mouse.get_pressed()
     if click[0] == 1:
-        pixels.append(pixel(mx, my, PIXEL_WIDTH, color))    
+        pixels.append(Pixel(mx, my, currentRadius, color))    
     if click[2] == 1:
-        pixels.append(pixel(mx, my, PIXEL_WIDTH, WHITE))  
+        pixels.append(Pixel(mx, my, currentRadius, WHITE))  
+
     keys = pygame.key.get_pressed()
     if keys[pygame.K_1]:
         color =BLACK
@@ -119,5 +124,6 @@ while run:
             name = input('write the name of the file you want to open: ')
             pixels = []
             openFile(name, pixels)
+
     redrawscreen()
     pygame.display.update()
