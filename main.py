@@ -124,6 +124,9 @@ while run:
             name = input('write the name of the file you want to open: ')
             pixels = []
             openFile(name, pixels)
+        
+        if keys[pygame.K_d]:
+            pixels = []
 
     redrawscreen()
     pygame.display.update()
